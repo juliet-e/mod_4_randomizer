@@ -1,0 +1,9 @@
+<h3>Upload Student CSVs here</h3>
+
+<%= form_with url: cohorts_path, method: :post, local:true do |f| %>
+  <div class="form-group">
+    <%= f.label :file, "Upload CSV File" %>
+    <%= f.file_field :file, required: true %>
+  </div>
+  <%= f.submit "Upload CSV" %>
+<% end %>

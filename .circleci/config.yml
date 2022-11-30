@@ -53,13 +53,15 @@ jobs: # a collection of steps
       - run:
           name: Deploy app to Fly
           # The following steps install Flyctl and deploy the app
+          environment:
+            ACCESS_TOKEN: $ACCESS_TOKEN
           command: |
             apk add --no-cache curl
             curl -L https://fly.io/install.sh | sh
             export FLYCTL_INSTALL="/root/.fly"
             export PATH="$FLYCTL_INSTALL/bin:$PATH"
             echo "Successfully Installed Flyctl"
-            sh -c "flyctl deploy"
+            sh -c "flyctl deploy --access-token $ACCESS_TOKEN"
             sh -c "flyctl info"
             exit 0
 workflows:

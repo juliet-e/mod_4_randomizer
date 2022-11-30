@@ -45,10 +45,39 @@ jobs: # a collection of steps
       - store_test_results: # Upload test results for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
           path: test_results
       # See https://circleci.com/docs/2.0/deployment-integrations/ for example deploy configs
+      - run:
+          name: Deploy to Fly
+          command: | #multiline command
+            apk add --no-cache curl
+  
+
+  deploy:
+    docker:
+      - image: alpine:3.12
+    steps:
+      - checkout
+      - run:
+          name: Deploy app to Fly
+          # The following steps install Flyctl and deploy the app
+          command: |
+            apk add --no-cache curl
+            curl -L https://fly.io/install.sh | sh
+            export FLYCTL_INSTALL="/root/.fly"
+            export PATH="$FLYCTL_INSTALL/bin:$PATH"
+            echo "Successfully Installed Flyctl"
+            sh -c "flyctl deploy"
+            sh -c "flyctl info"
+            exit 0
 workflows:
   build-test-deploy:
     jobs:
       - build-and-test
+      - deploy:
+          requires:
+            - build-and-test
+          filters:
+            branches:
+              only: main
 #      - heroku/deploy-via-git: # Use the pre-configured job, deploy-via-git
 #          requires:
 #            - build-and-test
